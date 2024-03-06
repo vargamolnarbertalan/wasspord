@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+        <title>Login | WassPord</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Log in to WassPord</h1>
+        <form id="regform">
+            <input class="gen-text non-table" type="text" id="username" placeholder="Username" required>
+            <input type="password" class="gen-text non-table" id="pw" placeholder="Password" required>
+            <button class="non-table btn small-btn" type="submit">Login</button>
+        </form>
+        <button id="reg-btn" class="non-table btn small-btn" type="button">Register</button>
+    </div>
+
+</body>
+
+<script>
+    $(document).ready(function() {
+
+        $("#regform").submit(function(event) {
+            event.preventDefault()
+            const username = $('#username').val()
+            const pw = $('#pw').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/login_user",
+                data: {
+                    'username': username,
+                    'pw': pw
+                },
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    location.href = "/"
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+        })
+
+        $('#reg-btn').on("click", async function(e) {
+            location.replace('/register')
+        })
+    })
+</script>
+
+</html>

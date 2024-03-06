@@ -1,0 +1,491 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
+@font-face {
+    font-family: 'Changa-regular';
+    src: url('../font/Changa/static/Changa-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Changa-bold';
+    src: url('../font/Changa/static/Changa-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: bold;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+    color: #00c7ff;
+    /* Light Blue */
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+body {
+    font-family: 'Changa-regular';
+    background-color: #121212;
+    /* Dark Grey */
+    margin: 0;
+    padding: 0;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 81px;
+    flex-direction: column;
+    
+}
+
+div,
+button,
+input,
+select {
+    font-family: 'Changa-regular';
+}
+
+.container {
+    background-color: #333;
+    /* Dark Grey */
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    /* White */
+    padding-top: 45px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 45px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    position: relative;
+}
+
+h1 {
+    color: #fff;
+    /* White */
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 25px;
+    word-wrap: break-word;
+}
+
+.gen-text,
+.favorite-team {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #555;
+    /* Dark Grey */
+    border-radius: 5px;
+    outline: none;
+    font-size: 15px;
+    text-align: center;
+}
+
+.team,
+.user {
+    font-weight: 400;
+}
+
+.gen-text:focus,
+.favorite-team:focus {
+    border-color: #00c7ff;
+    /* Light Blue */
+}
+
+.dash-field {
+    width: 100%;
+    display: inline-block;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.dash-field2 {
+    width: 97%;
+    padding: 0% 1.5%;
+    height: 100%;
+}
+
+.btn {
+    background-color: #00c7ff;
+    /* Light Blue */
+    color: #fff;
+    /* White */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    display: block;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background-color: #0078a9;
+    /* Darker Light Blue */
+}
+
+.btn:disabled {
+    background-color: #444444;
+    /* Dark Grey */
+    cursor: default;
+    color: #afafaf;
+    /* Light Grey */
+}
+
+.btn:disabled img {
+    opacity: 60%;
+}
+
+.small-btn {
+    width: auto;
+    display: block;
+    margin: auto;
+}
+
+.small-btn img {
+    max-width: 50px;
+    max-height: 50px;
+    width: auto;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+#result {
+    position: fixed;
+    z-index: 100;
+    bottom: 71px;
+    background-color: #1f1f1f;
+    /* Dark Grey */
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    border-color: #80beff;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+select option {
+    line-height: 40px;
+    font-weight: bold;
+}
+
+.fixed-bottom {
+    text-align: center;
+    background-color: #222;
+    /* Darker Grey */
+    color: #fff;
+    /* White */
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin: 0;
+    border-top: #333 3px solid;
+}
+
+.btn img.logo {
+    height: 38px;
+    margin-bottom: 3px;
+    margin-top: 7px;
+}
+
+#curr-email-div {
+    margin-bottom: 10px;
+}
+
+#curr-email {
+    color: #00a9e3;
+    /* Light Blue */
+}
+
+.btn .span1 {
+    font-size: 16px;
+}
+
+#status {
+    color: #aa0000;
+    /* Dark Red */
+    font-weight: bold;
+}
+
+.selector {
+    border: 1px solid #555;
+    /* Dark Grey */
+    border-radius: 5px;
+    outline: none;
+    width: 100%;
+    height: 60px;
+    margin: 0;
+}
+
+input {
+    display: block;
+    margin: auto;
+}
+
+.sport-selector-reg {
+    width: 80%;
+    -ms-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+textarea {
+    resize: none;
+    font-family: 'Changa-regular';
+}
+
+#content {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #555;
+    /* Dark Grey */
+    border-radius: 5px;
+    outline: none;
+}
+
+#content:focus {
+    border-color: #00c7ff;
+    /* Light Blue */
+}
+
+.back-container {
+    position: absolute;
+    left: 15px;
+    top: 0px;
+}
+
+.back-container button {
+    margin: 0;
+    padding: 5px 15px;
+}
+
+h2 {
+    text-align: left;
+    color: #fff;
+    /* White */
+}
+
+ul {
+    text-align: left;
+}
+
+.patch_notes div,
+.home div {
+    text-align: left;
+}
+
+.premium div {
+    text-align: left;
+}
+
+.footer-separator {
+    margin-left: 10px;
+    margin-right: 10px;
+    color: #00c7ff;
+    /* Light Blue */
+}
+
+.dateclass,
+.miscclass {
+    font-style: italic;
+    color: #888;
+    /* Lighter Grey */
+    margin-left: 0;
+}
+
+.reminder {
+    width: 100%;
+    margin: 10px auto;
+}
+
+#delete-btn,
+.delete-calendar {
+    background-color: #5f0000;
+    /* Dark Red */
+}
+
+#delete-btn:hover,
+.delete-calendar:enabled:hover {
+    background-color: #5f0000;
+    /* Dark Red */
+    -webkit-filter: brightness(70%);
+    filter: brightness(70%);
+}
+
+.delete-calendar:disabled:hover {
+    background-color: #444444;
+    /* Dark Grey */
+}
+
+#mng-calendar-btn {
+    /*
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
+border: 5px solid rgb(2, 0, 143);
+*/
+}
+
+hr.divider {
+    width: 80%;
+    text-align: center;
+    height: 3px;
+    color: #1b1b1b;
+    /* Darker Grey */
+    background-color: #1b1b1b;
+    /* Darker Grey */
+    margin-top: 45px;
+    margin-bottom: 45px;
+}
+
+.warning {
+    margin: auto;
+    width: 80%;
+}
+
+.non-table {
+    margin-bottom: 15px;
+}
+
+button.non-table {
+    width: 30%;
+}
+
+#purchase-btn {
+    background-image: -webkit-gradient(linear, left bottom, right top, from(#3f3f3f), to(#686868));
+    /* Darker Grey to Grey */
+    background-image: -o-linear-gradient(bottom left, #3f3f3f, #686868);
+    background-image: linear-gradient(to top right, #3f3f3f, #686868);
+}
+
+#purchase-btn:hover {
+    background-image: none;
+    background-color: #000;
+    /* Black */
+    color: #fff;
+    /* White */
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.patch_holder div,
+.info_holder div {
+    margin-left: 5px;
+}
+
+ul {
+    margin-left: 15px;
+    margin-bottom: 30px;
+    margin-top: 15px;
+    list-style-type: square;
+    list-style-position: inside;
+}
+
+.non-table#team-search-btn {
+    width: 60%;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        margin-top: 0;
+    }
+    .container {
+        max-width: 100%;
+        width: 100%;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .small-btn {
+        width: 60%;
+    }
+    .reminder {
+        width: 95%;
+    }
+    button.non-table {
+        width: 60%;
+    }
+    .custom-alert,
+    .custom-confirm {
+        width: 70%;
+    }
+}
+
+#loadOverlay {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    /* Black */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background-image: url("/img/loading.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* Custom Alert and Confirm Dialog Styles */
+
+.custom-alert,
+.custom-confirm {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    word-wrap: break-word;
+}
+
+.alert-content,
+.confirm-content {
+    text-align: center;
+}
+
+.custom-confirm button {
+    margin-top: 10px;
+}
+
+
+/* Show the overlay when the alert or confirm is active */
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+}
+
+
+/* Additional styles for overlay */
+
+#loadOverlay {
+    z-index: 9999;
+}

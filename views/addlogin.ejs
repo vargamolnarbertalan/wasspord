@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+        <title>Add login | WassPord</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Add new login for WassPord</h1>
+        <form id="regform">
+            <input class="gen-text non-table" type="text" id="service" placeholder="service.com" required>
+            <input class="gen-text non-table" type="text" id="username" placeholder="Username" required>
+            <input class="gen-text non-table" type="password" id="pw" placeholder="Password" required>
+            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">Add login</button>
+        </form>
+    </div>
+
+
+</body>
+
+<script>
+    $(document).ready(function() {
+        // When the form is submitted
+        $("#regform").submit(function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            const username = $('#username').val()
+            const pw = $('#pw').val()
+            const service = $('#service').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/add_new_login",
+                data: {
+                    'service': service,
+                    'username': username,
+                    'password': pw
+                },
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    location.href = "/logins"
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+        })
+    })
+</script>
+
+</html>
