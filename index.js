@@ -164,6 +164,12 @@ async function main() {
         })
     })
 
+    app.post('/edit_exs_login', (req, res) => {
+        editExsLogin(req.body.LoginID, req.body.service, req.body.username, req.body.password).then(editResult => {
+            res.status(editResult.status).send(editResult.msg)
+        })
+    })
+
     app.post('/login_user', (req, res) => {
         loginCheck(req.body.username, req.body.pw).then(dbresult => {
             if (dbresult.status == 200) { //successful login
@@ -380,11 +386,36 @@ function deleteLogin(LoginID) {
 function addNewLogin(service, username, password, owner) {
     return new Promise((resolve, reject) => {
         db.query(`
-        INSERT INTO Logins (service, username, password, owner) VALUES (?, ?, ?, ?);;
+        INSERT INTO Logins (service, username, password, owner) VALUES (?, ?, ?, ?);
         `, [service, username, password, owner], (err, dbres) => {
             var message = ''
             if (!err) {
                 message = `Login added successfully!`
+                console.log(message)
+                return resolve({
+                    status: 200,
+                    msg: message
+                })
+            } else {
+                message = `${err.code + '\n' + err.message}`
+                console.log(message)
+                return resolve({
+                    status: 492,
+                    msg: message
+                })
+            }
+        })
+    })
+}
+
+function editExsLogin(LoginID, service, username, password) {
+    return new Promise((resolve, reject) => {
+        db.query(`
+        UPDATE Logins SET service = ?,  username = ?,  password = ? WHERE LoginID = ?;
+        `, [service, username, password, LoginID], (err, dbres) => {
+            var message = ''
+            if (!err) {
+                message = `Login edited successfully!`
                 console.log(message)
                 return resolve({
                     status: 200,

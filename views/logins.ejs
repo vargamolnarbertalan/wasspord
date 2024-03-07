@@ -6,9 +6,10 @@
         <title>My logins | WassPord</title>
 
         <style>
-            body{
+            body {
                 display: block;
             }
+            
             table {
                 border-collapse: collapse;
                 width: 100%;
@@ -17,7 +18,7 @@
             
             th,
             td {
-                border: 2px solid #555;
+                border: 2px solid rgba(255, 255, 255, 0.568);
                 padding: 2px 10px;
                 text-align: right;
                 cursor: pointer;
@@ -34,7 +35,8 @@
                 cursor: pointer;
             }
             
-            .pageElement, .btnholder {
+            .pageElement,
+            .btnholder {
                 display: flex;
                 align-items: stretch;
                 text-align: center;
@@ -42,17 +44,27 @@
                 align-content: center;
                 flex-direction: row;
             }
-            .og{
+            
+            .og {
                 font-family: 'Changa-regular';
                 background-color: #121212;
                 margin: 0;
-                padding: 0;
-                display: flex;
+                padding: 0px 350px;
                 justify-content: center;
                 align-items: center;
                 margin-top: 20px;
                 margin-bottom: 81px;
                 flex-direction: column;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                text-align: center;
+            }
+            @media screen and (max-width: 1200px) {
+                .og {
+                    max-width: 100%;
+                    width: 100%;
+                    padding: 0;
             }
         </style>
 </head>
@@ -60,53 +72,95 @@
 <body>
 
     <div class="container" style="display: none;">
-        <h1>Edit login for WassPord</h1>
-        <form id="regform">
-            <input class="gen-text non-table" type="text" id="service" placeholder="service.com" required>
-            <input class="gen-text non-table" type="text" id="username" placeholder="Username" required>
-            <input class="gen-text non-table" type="password" id="pw" placeholder="Password" required>
+        <h1>Edit login</h1>
+        <form id="regform" data-loginid="">
+            <input class="gen-text non-table" type="text" id="service" required>
+            <input class="gen-text non-table" type="text" id="username" required>
+            <input class="gen-text non-table" type="password" name="pwname" id="pw" required>
+            <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW PASSWORD</button>
             <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">EDIT LOGIN</button>
             <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
     <div class="og">
-    <h1>Login Data</h1>
-    <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
+        <h1>Login Data</h1>
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
 
-    <a href="/add/login"><button id="add-btn" style="margin: 10px 0px;">ADD NEW LOGIN</button></a>
+        <a href="/add/login"><button id="add-btn" style="margin: 10px 0px;">ADD NEW LOGIN</button></a>
 
-    <table id="loginTable">
-        <thead>
-            <tr>
-                <th onclick="sortTable(0)">Service</th>
-                <th onclick="sortTable(1)">Username</th>
-                <th onclick="sortTable(2)">Password</th>
-                <th>-</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% ejsdata.forEach(function(item) { %>
+        <table id="loginTable">
+            <thead>
                 <tr>
-                    <td class="openable serviceinfo"><%=item.service%></td>
-                    <td class="copiable userinfo" data-realvalue="<%=item.username%>"><%=item.username%></td>
-                    <td>
-                        <div class="pageElement">
-                            <div class="copiable pwinfo" data-realvalue="<%=item.password%>">**********</div>
-                            <div><img class="show" data-hidden="true" src="img/show.png" alt="show / hide" width="18" height="18"></div>
-                        </div>
-                    </td>
-                    <td class="btnholder">
-                        <button class="edit-btn" type="button" data-num="<%=item.LoginID%>">EDIT</button>
-                        <button class="del-btn" type="button" data-num="<%=item.LoginID%>">DEL</button>
-                    </td>
+                    <th onclick="sortTable(0)">Service</th>
+                    <th onclick="sortTable(1)">Username</th>
+                    <th onclick="sortTable(2)">Password</th>
+                    <th>-</th>
                 </tr>
-                <% }); %>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                <% ejsdata.forEach(function(item) { %>
+                    <tr>
+                        <td class="openable serviceinfo">
+                            <%=item.service%>
+                        </td>
+                        <td class="copiable userinfo" data-realvalue="<%=item.username%>">
+                            <%=item.username%>
+                        </td>
+                        <td>
+                            <div class="pageElement">
+                                <div class="copiable pwinfo" data-realvalue="<%=item.password%>">****</div>
+                                <div><img class="show" data-hidden="true" src="img/show.png" alt="show / hide" width="18" height="18"></div>
+                            </div>
+                        </td>
+                        <td class="btnholder">
+                            <button class="edit-btn" type="button" data-num="<%=item.LoginID%>">✏️</button>
+                            <button class="del-btn" type="button" data-num="<%=item.LoginID%>">🗑️</button>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
 
     <script>
+        $("#regform").submit(function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            const username = $('#username').val()
+            const pw = $('#pw').val()
+            const service = $('#service').val()
+            const loginid = $(this).attr('data-loginid')
+
+            $.ajax({
+                type: "POST",
+                url: "/edit_exs_login",
+                data: {
+                    'LoginID': loginid,
+                    'service': service,
+                    'username': username,
+                    'password': pw
+                },
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    location.reload()
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+        })
+
+        function pwToggle() {
+            var x = document.getElementById("pw");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+
         $('.show').on("click", function(e) {
             var hidden = $(this).attr('data-hidden')
             if (hidden == "true") {
@@ -119,10 +173,19 @@
                 var parent = $(this).closest('.pageElement')
                 var passwordDiv = parent.find('[data-realvalue]')
                 var password = passwordDiv.attr('data-realvalue')
-                passwordDiv.text('**********')
+                passwordDiv.text('****')
                 $(this).attr('data-hidden', 'true')
             }
 
+        })
+
+        $('#toggle').on("click", function(e) {
+            pwToggle()
+            if ($(this).text() == "SHOW PASSWORD") {
+                $(this).text("HIDE PASSWORD")
+            } else {
+                $(this).text("SHOW PASSWORD")
+            }
         })
 
         $('.copiable').on("click", function(e) {
@@ -130,85 +193,84 @@
         })
 
         $('.del-btn').on("click", function(e) {
-            if(confirm("Are you sure you want to delete this record?", "YES", "NO")){
+            if (confirm("Are you sure you want to delete this record?", "YES", "NO")) {
                 const delnum = $(this).attr('data-num')
                 const el = $(this)
                 $.ajax({
-                type: "POST",
-                url: "/delete_login",
-                data: {
-                    'LoginID': delnum
-                },
-                success: function(data, status, xhr) {
-                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                    el.parent().parent().remove()
-                },
-                error: function(xhr, status, error) {
-                    alert(`Error: ${xhr.responseText}`)
-                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                }
-            })
+                    type: "POST",
+                    url: "/delete_login",
+                    data: {
+                        'LoginID': delnum
+                    },
+                    success: function(data, status, xhr) {
+                        //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                        el.parent().parent().remove()
+                    },
+                    error: function(xhr, status, error) {
+                        alert(`Error: ${xhr.responseText}`)
+                        console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    }
+                })
             }
         })
 
         $('#cancel').on("click", function(e) {
-            $('.og').css('display','flex')
-            $('.container').css('display','none')
-            $('body').css('display','block')
-            /*
-                const delnum = $(this).attr('data-num')
-                const el = $(this)
-                $.ajax({
-                type: "POST",
-                url: "/delete_login",
-                data: {
-                    'LoginID': delnum
-                },
-                success: function(data, status, xhr) {
-                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                    el.parent().parent().remove()
-                },
-                error: function(xhr, status, error) {
-                    alert(`Error: ${xhr.responseText}`)
-                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                }
-            })
-            */
+            $('.og').css('display', 'flex')
+            $('.container').css('display', 'none')
+            $('body').css('display', 'block')
+                /*
+                    const delnum = $(this).attr('data-num')
+                    const el = $(this)
+                    $.ajax({
+                    type: "POST",
+                    url: "/delete_login",
+                    data: {
+                        'LoginID': delnum
+                    },
+                    success: function(data, status, xhr) {
+                        //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                        el.parent().parent().remove()
+                    },
+                    error: function(xhr, status, error) {
+                        alert(`Error: ${xhr.responseText}`)
+                        console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    }
+                })
+                */
         })
 
         $('.edit-btn').on("click", function(e) {
-            const serv = $(this).parent().parent().closest('.serviceinfo').text()
-            const usr = $(this).parent().parent().closest('.userinfo').text()
-            const pw = $(this).parent().parent().closest('.pwinfo').attr('data-realvalue')
-
-            alert(serv,usr,pw)
+            const serv = $(this).parent().parent().find('.serviceinfo').text()
+            const usr = $(this).parent().parent().find('.userinfo').text()
+            const pw = $(this).parent().parent().find('.pwinfo').attr('data-realvalue')
 
             $('#service').val(serv)
             $('#username').val(usr)
             $('#pw').val(pw)
+            $('#regform').attr('data-loginid', $(this).attr('data-num'))
 
-            $('body').css('display','flex')
-            $('.og').css('display','none')
-            $('.container').css('display','block')
-            /*
-                const delnum = $(this).attr('data-num')
-                const el = $(this)
-                $.ajax({
-                type: "POST",
-                url: "/delete_login",
-                data: {
-                    'LoginID': delnum
-                },
-                success: function(data, status, xhr) {
-                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                    el.parent().parent().remove()
-                },
-                error: function(xhr, status, error) {
-                    alert(`Error: ${xhr.responseText}`)
-                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
-                }
-            })
-            */
+            $('body').css('display', 'flex')
+            $('.og').css('display', 'none')
+            $('.container').css('display', 'block')
+                /*
+                    const delnum = $(this).attr('data-num')
+                    const el = $(this)
+                    $.ajax({
+                    type: "POST",
+                    url: "/delete_login",
+                    data: {
+                        'LoginID': delnum
+                    },
+                    success: function(data, status, xhr) {
+                        //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                        el.parent().parent().remove()
+                    },
+                    error: function(xhr, status, error) {
+                        alert(`Error: ${xhr.responseText}`)
+                        console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    }
+                })
+                */
         })
 
         $('.openable').on("click", function(e) {
@@ -226,10 +288,10 @@
             alert("Copied to clipboard!")
         }
 
-        function goToService(service){
+        function goToService(service) {
             var url = `http://${service}/`
-            //alert(url)
-            var win = window.open(url , '_blank');
+                //alert(url)
+            var win = window.open(url, '_blank');
             if (win) {
                 //Browser has allowed it to be opened
                 win.focus();
