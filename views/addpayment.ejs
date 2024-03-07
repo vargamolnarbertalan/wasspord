@@ -83,12 +83,12 @@
         // When the form is submitted
         $("#regform").submit(function(event) {
             // Prevent the default form submission
-            event.preventDefault();
+            event.preventDefault()
             const name = $('#name').val()
             const holder = $('#holder').val()
-            const number = $('#number').val()
+            const number = $('#number').val().replace(/\D/g, "")
             const security = $('#security').val()
-            const expiration = $('#expiration').val()
+            const expiration = $('#expiration').val().replace(/\D/g, "")
 
             $.ajax({
                 type: "POST",

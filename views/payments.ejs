@@ -108,14 +108,14 @@
                     <tr>
                         <td class="nameinfo"><%=item.name%></td>
                         <td class="copiable holderinfo" data-realvalue="<%=item.holder%>"><%=item.holder%></td>
-                        <td class="copiable numberinfo" data-realvalue="<%=item.number%>"><%=item.number%></td>
+                        <td class="copiable numberinfo" data-realvalue="<%=item.number%>"><%=item.number.match(/.{1,4}/g).join('-')%></td>
                         <td>
                             <div class="pageElement">
                                 <div class="copiable securityinfo" data-realvalue="<%=item.security%>">***</div>
                                 <div><img class="show" data-hidden="true" src="img/show.png" alt="show / hide" width="18" height="18"></div>
                             </div>
                         </td>
-                        <td class="copiable expinfo" data-realvalue="<%=item.expiration%>"><%=item.expiration%></td>
+                        <td class="copiable expinfo" data-realvalue="<%=item.expiration%>"><%=item.expiration.match(/.{1,2}/g).join('/')%></td>
                         <td class="btnholder">
                             <button class="edit-btn" type="button" data-num="<%=item.PaymentID%>">✏️</button>
                             <button class="del-btn" type="button" data-num="<%=item.PaymentID%>">🗑️</button>
@@ -135,8 +135,8 @@
             event.preventDefault();
             const name = $('#name').val()
             const holder = $('#holder').val()
-            const number = $('#number').val()
-            const exp = $('#expiration').val()
+            const number = $('#number').val().replace(/\D/g, "")
+            const exp = $('#expiration').val().replace(/\D/g, "")
             const security = $('#security').val()
             const paymentid = $(this).attr('data-paymentid')
 
@@ -301,7 +301,7 @@
             navigator.clipboard.writeText(stringToCopy)
 
             // Alert the copied text
-            alert("Copied to clipboard!")
+            //alert("Copied to clipboard!")
         }
 
         /*
