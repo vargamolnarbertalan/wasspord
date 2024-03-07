@@ -77,7 +77,7 @@
         <form id="regform" data-paymentid="">
             <input class="gen-text non-table" type="text" id="name">
             <input class="gen-text non-table" type="text" id="holder" required>
-            <input class="gen-text non-table" type="text" id="number" required>
+            <input class="gen-text non-table" type="text" id="number" maxlength="19" minlength="19" required>
             <input class="gen-text non-table" type="password" name="pwname" id="security" required>
             <input class="gen-text non-table" type="text" id="expiration" required>
             <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW SECURITY CODE</button>
@@ -127,6 +127,9 @@
     </div>
 
     <script>
+
+
+
         $("#regform").submit(function(event) {
             // Prevent the default form submission
             event.preventDefault();

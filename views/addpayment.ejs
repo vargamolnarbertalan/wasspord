@@ -13,11 +13,11 @@
         <form id="regform">
             <input class="gen-text non-table" type="text" id="name" placeholder="My favourite card">
             <input class="gen-text non-table" type="text" id="holder" placeholder="Card holder" required>
-            <input class="gen-text non-table" type="text" id="number" placeholder="1111-2222-3333-4444" required>
-            <input class="gen-text non-table" type="password" id="security" placeholder="123" required>
-            <input class="gen-text non-table" type="text" id="expiration" placeholder="01/30" required>
+            <input class="gen-text non-table" type="text" id="number" placeholder="1111-2222-3333-4444" maxlength="19" minlength="19" required>
+            <input class="gen-text non-table" type="password" id="security" placeholder="123" maxlength="3" minlength="3" required>
+            <input class="gen-text non-table" type="text" id="expiration" placeholder="01/30" maxlength="5" minlength="5" required>
             <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">ADD PAYMENT</button>
-            <a href="/payments"><button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button></a>
+            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
@@ -26,6 +26,60 @@
 
 <script>
     $(document).ready(function() {
+        $('#cancel').on('click', function(event){
+            location.href = '/payments'
+        })
+
+        $('#security').on('input', function() {
+            var text = $(this).val()
+            var numbersOnly = text.replace(/\D/g, '') // Remove non-numeric characters
+            $(this).val(numbersOnly)
+        })
+
+        $('#expiration').on('input', function() {
+            var text = $(this).val()
+            var numbersOnly = text.replace(/\D/g, '') // Remove non-numeric characters
+            $(this).val(numbersOnly)
+            var modifiedText = insertSlash(numbersOnly)
+            $(this).val(modifiedText)
+        })
+
+        $('#number').on('input', function() {
+            var text = $(this).val()
+            var numbersOnly = text.replace(/\D/g, '') // Remove non-numeric characters
+            $(this).val(numbersOnly)
+            var modifiedText = insertHyphens(numbersOnly)
+            $(this).val(modifiedText)
+        })
+        
+        function insertHyphens(text) {
+            if (text.length > 3 && text.charAt(4) !== '-') {
+                text = text.slice(0, 4) + '-' + text.slice(4)
+            }
+            if (text.length > 8 && text.charAt(9) !== '-') {
+                text = text.slice(0, 9) + '-' + text.slice(9)
+            }
+            if (text.length > 13 && text.charAt(14) !== '-') {
+                text = text.slice(0, 14) + '-' + text.slice(14)
+            }
+            if (text.slice(-1) === '-') {
+                // Remove the last character
+                text = text.substring(0, text.length - 1);
+            }
+            return text;
+        }
+
+        function insertSlash(text) {
+            if (text.length > 1 && text.charAt(2) !== '/') {
+                text = text.slice(0, 2) + '/' + text.slice(2)
+            }
+            if (text.slice(-1) === '/') {
+                // Remove the last character
+                text = text.substring(0, text.length - 1);
+            }
+            return text
+        }
+
         // When the form is submitted
         $("#regform").submit(function(event) {
             // Prevent the default form submission

@@ -15,7 +15,7 @@
             <input class="gen-text non-table" type="text" id="username" placeholder="Username" required>
             <input class="gen-text non-table" type="password" id="pw" placeholder="Password" required>
             <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">ADD LOGIN</button>
-            <a href="/logins"><button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button></a>
+            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
@@ -24,6 +24,10 @@
 
 <script>
     $(document).ready(function() {
+        $('#cancel').on('click', function(event){
+            location.href = '/logins'
+        })
+
         // When the form is submitted
         $("#regform").submit(function(event) {
             // Prevent the default form submission
