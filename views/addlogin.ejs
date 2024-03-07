@@ -8,7 +8,7 @@
 
 <body>
 
-    <div class="container">
+    <div class="container" id="con" data-pw="<%=ejsdata.passphrase%>">
         <h1>Add new login</h1>
         <form id="regform">
             <input class="gen-text non-table" type="text" id="service" placeholder="service.com" required>
@@ -23,13 +23,14 @@
 </body>
 
 <script>
+
     $(document).ready(function() {
         $('#cancel').on('click', function(event){
             location.href = '/logins'
         })
 
         // When the form is submitted
-        $("#regform").submit(function(event) {
+        $("#regform").submit(async function(event) {
             // Prevent the default form submission
             event.preventDefault();
             const username = $('#username').val()

@@ -95,7 +95,10 @@ async function main() {
 
     app.get('/add/login', (req, res) => {
         if (req.session.loggedIn !== undefined && req.session.loggedIn == 1 && req.session.user.UserID !== undefined) {
-            res.status(200).render('addlogin')
+            const ejsdata = {
+                passphrase: req.session.user.pw
+            }
+            res.status(200).render('addlogin', { ejsdata })
         } else {
             req.session.loggedIn = 0
             req.session.destroy()
@@ -120,7 +123,8 @@ async function main() {
                     listLogins(req.session.user.UserID).then(loginList => {
                         //console.log(loginList)
                         const ejsdata = loginList
-                        res.status(200).render('logins', { ejsdata })
+                        const passphrase = req.session.user.pw
+                        res.status(200).render('logins', { ejsdata, passphrase })
                     })
 
                 } else { // LOGGED OUT

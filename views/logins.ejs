@@ -49,7 +49,7 @@
                 font-family: 'Changa-regular';
                 background-color: #121212;
                 margin: 0;
-                padding: 0px 350px;
+                padding: 0;
                 justify-content: center;
                 align-items: center;
                 margin-top: 20px;
@@ -84,17 +84,21 @@
         </form>
     </div>
 
-    <div class="og">
+    <div class="og" id="con" data-pw="<%=passphrase%>">
         <h1>Login Data</h1>
         <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
 
         <a href="/add/login"><button id="add-btn" style="margin: 10px 0px;">ADD NEW LOGIN</button></a>
+        <a href="/"><button id="back-btn" style="margin: 10px 0px;">BACK</button></a>
+        <input type="file" id="csvFileInput" style="display: none;">
+        <button id="import">Import CSV</button>
+
 
         <table id="loginTable">
             <thead>
                 <tr>
                     <th onclick="sortTable(0)">Service</th>
-                    <th onclick="sortTable(1)">Username</th>
+                    <th onclick="sortTable(1)">Username / Email</th>
                     <th onclick="sortTable(2)">Password</th>
                     <th>-</th>
                 </tr>
@@ -121,6 +125,61 @@
     </div>
 
     <script>
+
+    $('#import').on('click', function() {
+            $('#csvFileInput').trigger('click');
+        });
+
+        $('#csvFileInput').on('change', function(e) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = e.target.result;
+                processData(data);
+            };
+            reader.readAsText(file);
+        });
+
+        function processData(data) {
+            var dataArray = [];
+            var lines = data.split('\n');
+            lines.forEach(function(line) {
+                var elements = line.split(',');
+                var service = elements[6].trim(); // url
+                var username = elements[0].trim();
+                var password = elements[4].trim();
+                dataArray.push({
+                    service: service,
+                    username: username,
+                    password: password
+                });
+            });
+
+            // Now you can use the dataArray for further processing
+            console.log(dataArray)
+            for(var data of dataArray){
+                $.ajax({
+                type: "POST",
+                url: "/add_new_login",
+                async: true,
+                data: {
+                    'service': data.service,
+                    'username': data.username,
+                    'password': data.password
+                },
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    //location.href = "/logins"
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+            }
+            location.href = "/logins"
+        }
+
         $("#regform").submit(function(event) {
             // Prevent the default form submission
             event.preventDefault();
@@ -286,16 +345,34 @@
         }
 
         function goToService(service) {
-            var url = `http://${service}/`
+            if(service.includes('http')){
+                
+                var url = `${service}`
+                //alert('van http: ' + url)
                 //alert(url)
-            var win = window.open(url, '_blank');
-            if (win) {
-                //Browser has allowed it to be opened
-                win.focus();
-            } else {
-                //Browser has blocked it
-                alert('Please allow popups for this website');
+                var win = window.open(url, '_blank');
+                if (win) {
+                    //Browser has allowed it to be opened
+                    win.focus();
+                } else {
+                    //Browser has blocked it
+                    alert('Please allow popups for this website');
+                }
             }
+            else{
+                var url = `http://${service}`
+                //alert('nincs http: ' + url)
+                //alert(url)
+                var win = window.open(url, '_blank');
+                if (win) {
+                    //Browser has allowed it to be opened
+                    win.focus();
+                } else {
+                    //Browser has blocked it
+                    alert('Please allow popups for this website');
+                }
+            }
+
         }
 
         function sortTable(columnIndex) {
@@ -339,6 +416,7 @@
                 }
             }
         }
+
     </script>
 </body>
 
