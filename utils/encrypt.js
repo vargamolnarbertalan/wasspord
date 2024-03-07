@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
 // Encryption function
 function encrypt(text, secretKey) {
@@ -16,12 +17,21 @@ function decrypt(encryptedText, secretKey) {
     return decrypted;
 }
 
-/* Example usage
+function masterEncrypt(og){
+    return new Promise((resolve, reject) => {
+        return resolve( bcrypt.hash(og, 11) )
+    })
+}
 
-const encryptedText = encrypt(originalText, secretKey);
-console.log('Encrypted:', encryptedText);
+function masterDecrypt(plain, encrypted){
+    return new Promise((resolve, reject) => {
+        return resolve( bcrypt.compare(plain, encrypted) )
+    })
+}
 
-const decryptedText = decrypt(encryptedText, secretKey);
-console.log('Decrypted:', decryptedText);
-
- */
+module.exports = {
+    encrypt,
+    decrypt,
+    masterEncrypt,
+    masterDecrypt
+}

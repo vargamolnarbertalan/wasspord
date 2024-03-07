@@ -118,7 +118,7 @@ async function main() {
         if (req.session.loggedIn !== undefined && req.session.loggedIn == 1 && req.session.user.UserID !== undefined) {
             getActiveUserInfo(req.session.user.UserID).then(el => {
                 if (el.status == 200) { // LOGGED IN
-                    listLogins(req.session.user.UserID).then(loginList => {
+                    listLogins(req.session.user.UserID, req.session.user.pw).then(loginList => {
                         //console.log(loginList)
                         const ejsdata = loginList
                         res.status(200).render('logins', { ejsdata })
@@ -141,7 +141,7 @@ async function main() {
         if (req.session.loggedIn !== undefined && req.session.loggedIn == 1 && req.session.user.UserID !== undefined) {
             getActiveUserInfo(req.session.user.UserID).then(el => {
                 if (el.status == 200) { // LOGGED IN
-                    listPayments(req.session.user.UserID).then(paymentList => {
+                    listPayments(req.session.user.UserID, req.session.user.pw).then(paymentList => {
                         //console.log(loginList)
                         const ejsdata = paymentList
                         res.status(200).render('payments', { ejsdata })
@@ -199,25 +199,25 @@ async function main() {
     })
 
     app.post('/add_new_login', (req, res) => {
-        addNewLogin(req.body.service, req.body.username, req.body.password, req.session.user.UserID).then(addResult => {
+        addNewLogin(req.body.service, req.body.username, req.body.password, req.session.user.UserID, req.session.user.pw).then(addResult => {
             res.status(addResult.status).send(addResult.msg)
         })
     })
 
     app.post('/add_new_payment', (req, res) => {
-        addNewPayment(req.body.name, req.body.holder, req.body.number, req.body.security, req.body.expiration, req.session.user.UserID).then(addResult => {
+        addNewPayment(req.body.name, req.body.holder, req.body.number, req.body.security, req.body.expiration, req.session.user.UserID, req.session.user.pw).then(addResult => {
             res.status(addResult.status).send(addResult.msg)
         })
     })
 
     app.post('/edit_exs_login', (req, res) => {
-        editExsLogin(req.body.LoginID, req.body.service, req.body.username, req.body.password).then(editResult => {
+        editExsLogin(req.body.LoginID, req.body.service, req.body.username, req.body.password, req.session.user.pw).then(editResult => {
             res.status(editResult.status).send(editResult.msg)
         })
     })
 
     app.post('/edit_exs_payment', (req, res) => {
-        editExsPayment(req.body.PaymentID, req.body.name, req.body.holder, req.body.number, req.body.security, req.body.expiration).then(editResult => {
+        editExsPayment(req.body.PaymentID, req.body.name, req.body.holder, req.body.number, req.body.security, req.body.expiration, req.session.user.pw).then(editResult => {
             res.status(editResult.status).send(editResult.msg)
         })
     })
@@ -231,6 +231,7 @@ async function main() {
                         const newUser = el2.data
                         req.session.loggedIn = 1
                         req.session.user = newUser
+                        //console.log(req.session.user)
                         res.status(dbresult.status).send(dbresult.msg)
                     })
                 })
@@ -307,20 +308,22 @@ function loginCheck(UserName, pw) {
                     //console.log(dbres)
                     message = `User '${UserName}' found!`
                         //console.log(message)
-                    if (pw == dbres[0].pw) {
-                        message = `${UserName} successfully logged in!`
-                        console.log(message)
-                        return resolve({
-                            status: 200,
-                            msg: message
-                        })
-                    } else {
-                        console.log(`User '${UserName}' entered wrong password!`)
-                        return resolve({
-                            status: 490,
-                            msg: `Incorrect password!`
-                        })
-                    }
+                    mySecret.masterDecrypt(pw, dbres[0].pw).then(masterRes => {
+                        if (masterRes) {
+                            message = `${UserName} successfully logged in!`
+                            console.log(message)
+                            return resolve({
+                                status: 200,
+                                msg: message
+                            })
+                        } else {
+                            console.log(`User '${UserName}' entered wrong password!`)
+                            return resolve({
+                                status: 490,
+                                msg: `Incorrect password!`
+                            })
+                        }
+                    })
                 } else {
                     //console.log(dbres)
                     message = `User '${UserName}' does not exist!`
@@ -360,13 +363,16 @@ function findUserID(username) {
 
 
 
-function listLogins(owner) {
+function listLogins(owner, secret) {
 
     return new Promise((resolve, reject) => {
         db.query(`
         SELECT * FROM Logins WHERE owner = ?;
         `, [owner], (err, dbres) => {
             if (!err) {
+                for(var i = 0; i < dbres.length; i++){
+                    dbres[i].password = mySecret.decrypt(dbres[i].password, secret + 'titok@19100206')
+                }
                 return resolve(dbres)
             } else {
                 console.log(err.message)
@@ -376,13 +382,16 @@ function listLogins(owner) {
     })
 }
 
-function listPayments(owner) {
+function listPayments(owner, secret) {
 
     return new Promise((resolve, reject) => {
         db.query(`
         SELECT * FROM Payments WHERE owner = ?;
         `, [owner], (err, dbres) => {
             if (!err) {
+                for(var i = 0; i < dbres.length; i++){
+                    dbres[i].security = mySecret.decrypt(dbres[i].security, secret + 'titok@19100206')
+                }
                 return resolve(dbres)
             } else {
                 console.log(err.message)
@@ -394,34 +403,36 @@ function listPayments(owner) {
 
 function createNewUser(UserName, pw) {
     return new Promise((resolve, reject) => {
-        db.query(`
-        INSERT INTO users (UserName, pw)
-        VALUES (?, ?);
-        `, [UserName, pw], (err, dbres) => {
-            var message = ''
-            if (!err) {
-                message = `New user '${UserName}' registered successfully!`
-                console.log(message)
-                return resolve({
-                    status: 200,
-                    msg: message
-                })
-            } else {
-                if (err.code == 'ER_DUP_ENTRY') {
-                    message = `Username already in use!`
+        mySecret.masterEncrypt(pw).then(masterRes => {
+            db.query(`
+            INSERT INTO users (UserName, pw)
+            VALUES (?, ?);
+            `, [UserName, masterRes], (err, dbres) => {
+                var message = ''
+                if (!err) {
+                    message = `New user '${UserName}' registered successfully!`
                     console.log(message)
                     return resolve({
-                        status: 491,
+                        status: 200,
+                        msg: message
+                    })
+                } else {
+                    if (err.code == 'ER_DUP_ENTRY') {
+                        message = `Username already in use!`
+                        console.log(message)
+                        return resolve({
+                            status: 491,
+                            msg: message
+                        })
+                    }
+                    message = `${err.code + '\n' + err.message}`
+                    console.log(message)
+                    return resolve({
+                        status: 492,
                         msg: message
                     })
                 }
-                message = `${err.code + '\n' + err.message}`
-                console.log(message)
-                return resolve({
-                    status: 492,
-                    msg: message
-                })
-            }
+            })
         })
     })
 }
@@ -451,11 +462,11 @@ function deleteLogin(LoginID) {
     })
 }
 
-function addNewLogin(service, username, password, owner) {
+function addNewLogin(service, username, password, owner, secret) {
     return new Promise((resolve, reject) => {
         db.query(`
         INSERT INTO Logins (service, username, password, owner) VALUES (?, ?, ?, ?);
-        `, [service, username, password, owner], (err, dbres) => {
+        `, [service, username, mySecret.encrypt(password, secret + 'titok@19100206'), owner], (err, dbres) => {
             var message = ''
             if (!err) {
                 message = `Login added successfully!`
@@ -476,11 +487,11 @@ function addNewLogin(service, username, password, owner) {
     })
 }
 
-function editExsLogin(LoginID, service, username, password) {
+function editExsLogin(LoginID, service, username, password, secret) {
     return new Promise((resolve, reject) => {
         db.query(`
         UPDATE Logins SET service = ?,  username = ?,  password = ? WHERE LoginID = ?;
-        `, [service, username, password, LoginID], (err, dbres) => {
+        `, [service, username, mySecret.encrypt(password, secret + 'titok@19100206'), LoginID], (err, dbres) => {
             var message = ''
             if (!err) {
                 message = `Login edited successfully!`
@@ -501,11 +512,11 @@ function editExsLogin(LoginID, service, username, password) {
     })
 }
 
-function editExsPayment(PaymentID, name, holder, number, security, expiration) {
+function editExsPayment(PaymentID, name, holder, number, security, expiration, secret) {
     return new Promise((resolve, reject) => {
         db.query(`
         UPDATE Payments SET name = ?, holder = ?,  number = ?, security = ?, expiration = ? WHERE PaymentID = ?;
-        `, [name, holder, number, security, expiration, PaymentID], (err, dbres) => {
+        `, [name, holder, number, mySecret.encrypt(security, secret + 'titok@19100206'), expiration, PaymentID], (err, dbres) => {
             var message = ''
             if (!err) {
                 message = `Payment edited successfully!`
@@ -551,11 +562,11 @@ function deletePayment(PaymentID) {
     })
 }
 
-function addNewPayment(name, holder, number, security, expiration, owner) {
+function addNewPayment(name, holder, number, security, expiration, owner, secret) {
     return new Promise((resolve, reject) => {
         db.query(`
         INSERT INTO Payments (name, holder, number, security, expiration, owner) VALUES (?, ?, ?, ?, ?, ?);
-        `, [name, holder, number, security, expiration, owner], (err, dbres) => {
+        `, [name, holder, number, mySecret.encrypt(security, secret + 'titok@19100206'), expiration, owner], (err, dbres) => {
             var message = ''
             if (!err) {
                 message = `Payment added successfully!`
