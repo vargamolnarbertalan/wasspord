@@ -5,6 +5,7 @@ const session = require('express-session')
 const dotenv = require('dotenv')
 const path = require('path')
 const mysql = require('mysql2')
+const mySecret = require('./utils/encrypt')
 dotenv.config({})
 
 const PORT = process.env.PORT || 80
@@ -95,10 +96,7 @@ async function main() {
 
     app.get('/add/login', (req, res) => {
         if (req.session.loggedIn !== undefined && req.session.loggedIn == 1 && req.session.user.UserID !== undefined) {
-            const ejsdata = {
-                passphrase: req.session.user.pw
-            }
-            res.status(200).render('addlogin', { ejsdata })
+            res.status(200).render('addlogin')
         } else {
             req.session.loggedIn = 0
             req.session.destroy()
@@ -123,8 +121,7 @@ async function main() {
                     listLogins(req.session.user.UserID).then(loginList => {
                         //console.log(loginList)
                         const ejsdata = loginList
-                        const passphrase = req.session.user.pw
-                        res.status(200).render('logins', { ejsdata, passphrase })
+                        res.status(200).render('logins', { ejsdata })
                     })
 
                 } else { // LOGGED OUT
