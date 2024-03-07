@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+        <title>Add payment | WassPord</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Add new payment</h1>
+        <form id="regform">
+            <input class="gen-text non-table" type="text" id="name" placeholder="My favourite card">
+            <input class="gen-text non-table" type="text" id="holder" placeholder="Card holder" required>
+            <input class="gen-text non-table" type="text" id="number" placeholder="1111-2222-3333-4444" required>
+            <input class="gen-text non-table" type="password" id="security" placeholder="123" required>
+            <input class="gen-text non-table" type="text" id="expiration" placeholder="01/30" required>
+            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">ADD PAYMENT</button>
+            <a href="/payments"><button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button></a>
+        </form>
+    </div>
+
+
+</body>
+
+<script>
+    $(document).ready(function() {
+        // When the form is submitted
+        $("#regform").submit(function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            const name = $('#name').val()
+            const holder = $('#holder').val()
+            const number = $('#number').val()
+            const security = $('#security').val()
+            const expiration = $('#expiration').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/add_new_payment",
+                data: {
+                    'name': name,
+                    'holder': holder,
+                    'number': number,
+                    'security': security,
+                    'expiration': expiration
+                },
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    location.href = "/payments"
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+        })
+    })
+</script>
+
+</html>

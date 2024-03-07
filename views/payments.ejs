@@ -3,7 +3,7 @@
 
 <head>
     <%- include('header.ejs') %>
-        <title>My logins | WassPord</title>
+        <title>My payments | WassPord</title>
 
         <style>
             body {
@@ -73,46 +73,52 @@
 <body>
 
     <div class="container" style="display: none;">
-        <h1>Edit login</h1>
-        <form id="regform" data-loginid="">
-            <input class="gen-text non-table" type="text" id="service" required>
-            <input class="gen-text non-table" type="text" id="username" required>
-            <input class="gen-text non-table" type="password" name="pwname" id="pw" required>
-            <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW PASSWORD</button>
-            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">EDIT LOGIN</button>
+        <h1>Edit payment</h1>
+        <form id="regform" data-paymentid="">
+            <input class="gen-text non-table" type="text" id="name">
+            <input class="gen-text non-table" type="text" id="holder" required>
+            <input class="gen-text non-table" type="text" id="number" required>
+            <input class="gen-text non-table" type="password" name="pwname" id="security" required>
+            <input class="gen-text non-table" type="text" id="expiration" required>
+            <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW SECURITY CODE</button>
+            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">EDIT PAYMENT</button>
             <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
     <div class="og">
-        <h1>Login Data</h1>
-        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
+        <h1>Payment Data</h1>
+        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for payments...">
 
-        <a href="/add/login"><button id="add-btn" style="margin: 10px 0px;">ADD NEW LOGIN</button></a>
+        <a href="/add/payment"><button id="add-btn" style="margin: 10px 0px;">ADD NEW PAYMENT</button></a>
 
         <table id="loginTable">
             <thead>
                 <tr>
-                    <th onclick="sortTable(0)">Service</th>
-                    <th onclick="sortTable(1)">Username</th>
-                    <th onclick="sortTable(2)">Password</th>
+                    <th onclick="sortTable(0)">Name</th>
+                    <th onclick="sortTable(1)">Card holder</th>
+                    <th onclick="sortTable(1)">Number</th>
+                    <th onclick="sortTable(2)">Security</th>
+                    <th onclick="sortTable(3)">Expiration</th>
                     <th>-</th>
                 </tr>
             </thead>
             <tbody>
                 <% ejsdata.forEach(function(item) { %>
                     <tr>
-                        <td class="openable serviceinfo"><%=item.service%></td>
-                        <td class="copiable userinfo" data-realvalue="<%=item.username%>"><%=item.username%></td>
+                        <td class="nameinfo"><%=item.name%></td>
+                        <td class="copiable holderinfo" data-realvalue="<%=item.holder%>"><%=item.holder%></td>
+                        <td class="copiable numberinfo" data-realvalue="<%=item.number%>"><%=item.number%></td>
                         <td>
                             <div class="pageElement">
-                                <div class="copiable pwinfo" data-realvalue="<%=item.password%>">****</div>
+                                <div class="copiable securityinfo" data-realvalue="<%=item.security%>">***</div>
                                 <div><img class="show" data-hidden="true" src="img/show.png" alt="show / hide" width="18" height="18"></div>
                             </div>
                         </td>
+                        <td class="copiable expinfo" data-realvalue="<%=item.expiration%>"><%=item.expiration%></td>
                         <td class="btnholder">
-                            <button class="edit-btn" type="button" data-num="<%=item.LoginID%>">✏️</button>
-                            <button class="del-btn" type="button" data-num="<%=item.LoginID%>">🗑️</button>
+                            <button class="edit-btn" type="button" data-num="<%=item.PaymentID%>">✏️</button>
+                            <button class="del-btn" type="button" data-num="<%=item.PaymentID%>">🗑️</button>
                         </td>
                     </tr>
                     <% }); %>
@@ -124,19 +130,23 @@
         $("#regform").submit(function(event) {
             // Prevent the default form submission
             event.preventDefault();
-            const username = $('#username').val()
-            const pw = $('#pw').val()
-            const service = $('#service').val()
-            const loginid = $(this).attr('data-loginid')
+            const name = $('#name').val()
+            const holder = $('#holder').val()
+            const number = $('#number').val()
+            const exp = $('#expiration').val()
+            const security = $('#security').val()
+            const paymentid = $(this).attr('data-paymentid')
 
             $.ajax({
                 type: "POST",
-                url: "/edit_exs_login",
+                url: "/edit_exs_payment",
                 data: {
-                    'LoginID': loginid,
-                    'service': service,
-                    'username': username,
-                    'password': pw
+                    'PaymentID': paymentid,
+                    'name': name,
+                    'holder': holder,
+                    'security': security,
+                    'expiration' : exp,
+                    'number': number
                 },
                 success: function(data, status, xhr) {
                     //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
@@ -150,7 +160,7 @@
         })
 
         function pwToggle() {
-            var x = document.getElementById("pw");
+            var x = document.getElementById("security");
             if (x.type === "password") {
                 x.type = "text";
             } else {
@@ -170,7 +180,7 @@
                 var parent = $(this).closest('.pageElement')
                 var passwordDiv = parent.find('[data-realvalue]')
                 var password = passwordDiv.attr('data-realvalue')
-                passwordDiv.text('****')
+                passwordDiv.text('***')
                 $(this).attr('data-hidden', 'true')
             }
 
@@ -178,10 +188,10 @@
 
         $('#toggle').on("click", function(e) {
             pwToggle()
-            if ($(this).text() == "SHOW PASSWORD") {
-                $(this).text("HIDE PASSWORD")
+            if ($(this).text() == "SHOW SECURITY CODE") {
+                $(this).text("HIDE SECURITY CODE")
             } else {
-                $(this).text("SHOW PASSWORD")
+                $(this).text("SHOW SECURITY CODE")
             }
         })
 
@@ -195,9 +205,9 @@
                 const el = $(this)
                 $.ajax({
                     type: "POST",
-                    url: "/delete_login",
+                    url: "/delete_payment",
                     data: {
-                        'LoginID': delnum
+                        'PaymentID': delnum
                     },
                     success: function(data, status, xhr) {
                         //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
@@ -237,14 +247,18 @@
         })
 
         $('.edit-btn').on("click", function(e) {
-            const serv = $(this).parent().parent().find('.serviceinfo').text()
-            const usr = $(this).parent().parent().find('.userinfo').text()
-            const pw = $(this).parent().parent().find('.pwinfo').attr('data-realvalue')
+            const name = $(this).parent().parent().find('.nameinfo').text()
+            const holder = $(this).parent().parent().find('.holderinfo').text()
+            const exp = $(this).parent().parent().find('.expinfo').text()
+            const number = $(this).parent().parent().find('.numberinfo').text()
+            const security = $(this).parent().parent().find('.securityinfo').attr('data-realvalue')
 
-            $('#service').val(serv)
-            $('#username').val(usr)
-            $('#pw').val(pw)
-            $('#regform').attr('data-loginid', $(this).attr('data-num'))
+            $('#name').val(name)
+            $('#holder').val(holder)
+            $('#security').val(security)
+            $('#expiration').val(exp)
+            $('#number').val(number)
+            $('#regform').attr('data-paymentid', $(this).attr('data-num'))
 
             $('body').css('display', 'flex')
             $('.og').css('display', 'none')
@@ -270,9 +284,11 @@
                 */
         })
 
+        /*
         $('.openable').on("click", function(e) {
             goToService($(this).text())
         })
+        */
 
         function toClipboard(element) {
 
@@ -285,6 +301,7 @@
             alert("Copied to clipboard!")
         }
 
+        /*
         function goToService(service) {
             var url = `http://${service}/`
                 //alert(url)
@@ -297,6 +314,7 @@
                 alert('Please allow popups for this website');
             }
         }
+        */
 
         function sortTable(columnIndex) {
             var table, rows, switching, i, x, y, shouldSwitch;
