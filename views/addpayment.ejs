@@ -16,8 +16,9 @@
             <input class="gen-text non-table" type="text" id="number" placeholder="1111-2222-3333-4444" maxlength="19" minlength="19" required>
             <input class="gen-text non-table" type="password" id="security" placeholder="123" maxlength="3" minlength="3" required>
             <input class="gen-text non-table" type="text" id="expiration" placeholder="01/30" maxlength="5" minlength="5" required>
-            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">ADD PAYMENT</button>
-            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
+            <button class="btn non-table" id="toggle" data-n="0" type="button">SHOW SECURITY CODE</button>
+            <button class="btn non-table" id="save-btn0" data-n="0" type="submit">ADD PAYMENT</button>
+            <button class="btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
@@ -25,7 +26,27 @@
 </body>
 
 <script>
+
+    function pwToggle() {
+        var x = document.getElementById("security");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+
     $(document).ready(function() {
+
+        $('#toggle').on("click", function(e) {
+            pwToggle()
+            if ($(this).text() == "SHOW SECURITY CODE") {
+                $(this).text("HIDE SECURITY CODE")
+            } else {
+                $(this).text("SHOW SECURITY CODE")
+            }
+        })
+
         $('#cancel').on('click', function(event){
             location.href = '/payments'
         })

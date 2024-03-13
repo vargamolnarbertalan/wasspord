@@ -5,6 +5,24 @@
 <link rel="stylesheet" href="/css/generic.css">
 <script type="text/javascript" src="/js/secure.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    window.onunload = function() {
+
+        $.ajax({
+                type: "GET",
+                url: "/logout",
+                success: function(data, status, xhr) {
+                    //alert(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                    location.href = "/login"
+                },
+                error: function(xhr, status, error) {
+                    alert(`Error: ${xhr.responseText}`)
+                    console.log(`response status code: ${xhr.status} | response text: ${xhr.responseText}`)
+                }
+            })
+
+}
+</script>
 <meta property="og:title" content="WassPord">
 <meta property="og:description" content="WassPord remembers your PassWord!">
 <meta property="og:image" content="https://i.imgur.com/PjxGlLL.png">

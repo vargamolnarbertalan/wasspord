@@ -4,70 +4,6 @@
 <head>
     <%- include('header.ejs') %>
         <title>My payments | WassPord</title>
-
-        <style>
-            body {
-                display: block;
-            }
-            
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                color: #00c7ff;
-            }
-            
-            th,
-            td {
-                border: 2px solid rgba(255, 255, 255, 0.568);
-                padding: 2px 10px;
-                text-align: right;
-                cursor: pointer;
-            }
-            
-            th {
-                cursor: pointer;
-                text-align: right;
-                font-weight: bold;
-            }
-            
-            img {
-                margin-left: 15px;
-                cursor: pointer;
-            }
-            
-            .pageElement,
-            .btnholder {
-                display: flex;
-                align-items: stretch;
-                text-align: center;
-                justify-content: flex-end;
-                align-content: center;
-                flex-direction: row;
-            }
-            
-            .og {
-                font-family: 'Changa-regular';
-                background-color: #121212;
-                margin: 0;
-                padding: 0px 350px;
-                justify-content: center;
-                align-items: center;
-                margin-top: 20px;
-                margin-bottom: 81px;
-                flex-direction: column;
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-                text-align: center;
-            }
-            @media screen and (max-width: 1200px) {
-                .og {
-                    max-width: 100%;
-                    width: 100%;
-                    padding: 0;
-                }
-            }
-        </style>
 </head>
 
 <body>
@@ -80,19 +16,21 @@
             <input class="gen-text non-table" type="text" id="number" maxlength="19" minlength="19" required>
             <input class="gen-text non-table" type="password" name="pwname" id="security" required>
             <input class="gen-text non-table" type="text" id="expiration" required>
-            <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW SECURITY CODE</button>
-            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">EDIT PAYMENT</button>
-            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
+            <button class="btn non-table" id="toggle" data-n="0" type="button">SHOW SECURITY CODE</button>
+            <button class="btn non-table" id="save-btn0" data-n="0" type="submit">EDIT PAYMENT</button>
+            <button class="btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
     <div class="og">
         <h1>Payment Data</h1>
-        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for payments...">
+        <input type="text" class="non-table" id="searchInput" onkeyup="searchFunction()" placeholder="Search for payments...">
 
-        <a href="/add/payment"><button id="add-btn" style="margin: 10px 0px;">ADD NEW PAYMENT</button></a>
-        <a href="/"><button id="back-btn" style="margin: 10px 0px;">BACK</button></a>
-
+    <div class="btncontainer">
+        <button class="non-table btn small-btn" id="add-btn">ADD NEW PAYMENT</button>
+        <button class="non-table btn small-btn" id="back-btn">BACK</button>
+    </div>
+    <div class="table-container">
         <table id="loginTable">
             <thead>
                 <tr>
@@ -118,13 +56,14 @@
                         </td>
                         <td class="copiable expinfo" data-realvalue="<%=item.expiration%>"><%=item.expiration.match(/.{1,2}/g).join('/')%></td>
                         <td class="btnholder">
-                            <button class="edit-btn" type="button" data-num="<%=item.PaymentID%>">✏️</button>
-                            <button class="del-btn" type="button" data-num="<%=item.PaymentID%>">🗑️</button>
+                            <button class="edit-btn modify btn small-btn" type="button" data-num="<%=item.PaymentID%>">✏️</button>
+                            <button class="del-btn modify btn small-btn" type="button" data-num="<%=item.PaymentID%>">🗑️</button>
                         </td>
                     </tr>
                     <% }); %>
             </tbody>
         </table>
+    </div>
     </div>
 
     <script>
@@ -228,7 +167,7 @@
         $('#cancel').on("click", function(e) {
             $('.og').css('display', 'flex')
             $('.container').css('display', 'none')
-            $('body').css('display', 'block')
+            $('body').css('display', 'flex')
                 /*
                     const delnum = $(this).attr('data-num')
                     const el = $(this)
@@ -250,6 +189,14 @@
                 */
         })
 
+        $('#add-btn').on('click', function(e){
+            location.href = '/add/payment'
+        })
+
+        $('#back-btn').on('click', function(e){
+            location.href = '/'
+        })
+
         $('.edit-btn').on("click", function(e) {
             const name = $(this).parent().parent().find('.nameinfo').text()
             const holder = $(this).parent().parent().find('.holderinfo').text()
@@ -266,7 +213,7 @@
 
             $('body').css('display', 'flex')
             $('.og').css('display', 'none')
-            $('.container').css('display', 'block')
+            $('.container').css('display', 'flex')
                 /*
                     const delnum = $(this).attr('data-num')
                     const el = $(this)

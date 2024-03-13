@@ -4,70 +4,6 @@
 <head>
     <%- include('header.ejs') %>
         <title>My logins | WassPord</title>
-
-        <style>
-            body {
-                display: block;
-            }
-            
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                color: #00c7ff;
-            }
-            
-            th,
-            td {
-                border: 2px solid rgba(255, 255, 255, 0.568);
-                padding: 2px 10px;
-                text-align: right;
-                cursor: pointer;
-            }
-            
-            th {
-                cursor: pointer;
-                text-align: right;
-                font-weight: bold;
-            }
-            
-            img {
-                margin-left: 15px;
-                cursor: pointer;
-            }
-            
-            .pageElement,
-            .btnholder {
-                display: flex;
-                align-items: stretch;
-                text-align: center;
-                justify-content: flex-end;
-                align-content: center;
-                flex-direction: row;
-            }
-            
-            .og {
-                font-family: 'Changa-regular';
-                background-color: #121212;
-                margin: 0;
-                padding: 0;
-                justify-content: center;
-                align-items: center;
-                margin-top: 20px;
-                margin-bottom: 81px;
-                flex-direction: column;
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-                text-align: center;
-            }
-            @media screen and (max-width: 1200px) {
-                .og {
-                    max-width: 100%;
-                    width: 100%;
-                    padding: 0;
-                }
-            }
-        </style>
 </head>
 
 <body>
@@ -78,22 +14,24 @@
             <input class="gen-text non-table" type="text" id="service" required>
             <input class="gen-text non-table" type="text" id="username" required>
             <input class="gen-text non-table" type="password" name="pwname" id="pw" required>
-            <button class="btn small-btn non-table" id="toggle" data-n="0" type="button">SHOW PASSWORD</button>
-            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">EDIT LOGIN</button>
-            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
+            <button class="btn non-table" id="generate" data-n="0" type="button">GENERATE PASSWORD</button>
+            <button class="btn non-table" id="toggle" data-n="0" type="button">SHOW PASSWORD</button>
+            <button class="btn non-table" id="save-btn0" data-n="0" type="submit">UPDATE LOGIN</button>
+            <button class="btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
     <div class="og">
         <h1>Login Data</h1>
-        <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
+        <input type="text" class="non-table" id="searchInput" onkeyup="searchFunction()" placeholder="Search for services...">
 
-        <a href="/add/login"><button id="add-btn" style="margin: 10px 0px;">ADD NEW LOGIN</button></a>
-        <a href="/"><button id="back-btn" style="margin: 10px 0px;">BACK</button></a>
+    <div class="btncontainer">
+        <button class="non-table btn small-btn" id="add-btn">ADD NEW LOGIN</button>
+        <button class="non-table btn small-btn" id="back-btn" >BACK</button>
         <input type="file" id="csvFileInput" style="display: none;">
-        <button id="import">Import CSV</button>
-
-
+        <button class="non-table btn small-btn" id="import">Import CSV</button>
+    </div>
+    <div class="table-container">
         <table id="loginTable">
             <thead>
                 <tr>
@@ -110,18 +48,19 @@
                         <td class="copiable userinfo" data-realvalue="<%=item.username%>"><%=item.username%></td>
                         <td>
                             <div class="pageElement">
-                                <div class="copiable pwinfo" data-realvalue="<%=item.password%>">****</div>
+                                <div class="copiable pwinfo" data-realvalue="<%=item.password%>">**********</div>
                                 <div><img class="show" data-hidden="true" src="img/show.png" alt="show / hide" width="18" height="18"></div>
                             </div>
                         </td>
                         <td class="btnholder">
-                            <button class="edit-btn" type="button" data-num="<%=item.LoginID%>">✏️</button>
-                            <button class="del-btn" type="button" data-num="<%=item.LoginID%>">🗑️</button>
+                            <button class="edit-btn modify btn small-btn" type="button" data-num="<%=item.LoginID%>">✏️</button>
+                            <button class="del-btn modify btn small-btn" type="button" data-num="<%=item.LoginID%>">🗑️</button>
                         </td>
                     </tr>
                     <% }); %>
             </tbody>
         </table>
+    </div>
     </div>
 
     <script>
@@ -229,10 +168,18 @@
                 var parent = $(this).closest('.pageElement')
                 var passwordDiv = parent.find('[data-realvalue]')
                 var password = passwordDiv.attr('data-realvalue')
-                passwordDiv.text('****')
+                passwordDiv.text('**********')
                 $(this).attr('data-hidden', 'true')
             }
 
+        })
+
+        $('#add-btn').on('click', function(e){
+            location.href = '/add/login'
+        })
+
+        $('#back-btn').on('click', function(e){
+            location.href = '/'
         })
 
         $('#toggle').on("click", function(e) {
@@ -246,6 +193,10 @@
 
         $('.copiable').on("click", function(e) {
             toClipboard($(this))
+        })
+
+        $('#generate').on("click", function(e) {
+            $('#pw').val(generateRandomPassword(12))
         })
 
         $('.del-btn').on("click", function(e) {
@@ -273,7 +224,7 @@
         $('#cancel').on("click", function(e) {
             $('.og').css('display', 'flex')
             $('.container').css('display', 'none')
-            $('body').css('display', 'block')
+            $('body').css('display', 'flex')
                 /*
                     const delnum = $(this).attr('data-num')
                     const el = $(this)
@@ -307,7 +258,7 @@
 
             $('body').css('display', 'flex')
             $('.og').css('display', 'none')
-            $('.container').css('display', 'block')
+            $('.container').css('display', 'flex')
                 /*
                     const delnum = $(this).attr('data-num')
                     const el = $(this)
@@ -415,6 +366,18 @@
                     }
                 }
             }
+        }
+
+        function generateRandomPassword(length) {
+            var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?"
+
+            var password = ""
+            for (var i = 0; i < length; i++) {
+                var randomIndex = Math.floor(Math.random() * charset.length)
+                password += charset[randomIndex]
+            }
+
+            return password
         }
 
     </script>

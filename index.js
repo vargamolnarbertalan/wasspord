@@ -48,9 +48,10 @@ async function main() {
     app.use(bodyParser.json())
     app.set('trust proxy', true)
     app.use(session({
+        cookie: {maxAge: null},
         secret: 'secret-key',
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true
     }))
 
     // GET REQUESTS
@@ -245,7 +246,18 @@ async function main() {
     app.get('/logout', (req, res) => {
         req.session.loggedIn = 0
         req.session.destroy()
+        console.log('logout triggered')
         res.status(200).send('Successfully logged out!')
+    })
+
+    app.get('/delete_user', (req, res) => {
+        deleteUser(req.session.user.UserID).then(delResult => {
+            if(delResult.status == 200){
+                req.session.loggedIn = 0
+                req.session.destroy()       
+            }
+            res.status(delResult.status).send(delResult.msg)
+        })
     })
 
     app.get('*', async(req, res) => {
@@ -570,6 +582,33 @@ function addNewPayment(name, holder, number, security, expiration, owner, secret
             var message = ''
             if (!err) {
                 message = `Payment added successfully!`
+                console.log(message)
+                return resolve({
+                    status: 200,
+                    msg: message
+                })
+            } else {
+                message = `${err.code + '\n' + err.message}`
+                console.log(message)
+                return resolve({
+                    status: 492,
+                    msg: message
+                })
+            }
+        })
+    })
+}
+
+function deleteUser(UserID) {
+    return new Promise((resolve, reject) => {
+        db.query(`
+        DELETE FROM Payments WHERE owner = ?;
+        DELETE FROM Logins WHERE owner = ?;
+        DELETE FROM users WHERE UserID = ?;
+        `, [UserID, UserID, UserID], (err, dbres) => {
+            var message = ''
+            if (!err) {
+                message = `Account deleted successfully!`
                 console.log(message)
                 return resolve({
                     status: 200,

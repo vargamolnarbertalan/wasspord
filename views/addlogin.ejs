@@ -14,8 +14,10 @@
             <input class="gen-text non-table" type="text" id="service" placeholder="service.com" required>
             <input class="gen-text non-table" type="text" id="username" placeholder="Username" required>
             <input class="gen-text non-table" type="password" id="pw" placeholder="Password" required>
-            <button class="btn small-btn non-table" id="save-btn0" data-n="0" type="submit">ADD LOGIN</button>
-            <button class="btn small-btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
+            <button class="btn non-table" id="generate" data-n="0" type="button">GENERATE PASSWORD</button>
+            <button class="btn non-table" id="toggle" data-n="0" type="button">SHOW PASSWORD</button>
+            <button class="btn non-table" id="save-btn0" data-n="0" type="submit">ADD LOGIN</button>
+            <button class="btn non-table" id="cancel" data-n="0" type="button">CANCEL</button>
         </form>
     </div>
 
@@ -23,8 +25,42 @@
 </body>
 
 <script>
+    function generateRandomPassword(length) {
+        var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?"
+
+        var password = ""
+        for (var i = 0; i < length; i++) {
+            var randomIndex = Math.floor(Math.random() * charset.length)
+            password += charset[randomIndex]
+        }
+
+        return password
+    }
+
+    function pwToggle() {
+            var x = document.getElementById("pw");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
 
     $(document).ready(function() {
+
+        $('#toggle').on("click", function(e) {
+            pwToggle()
+            if ($(this).text() == "SHOW PASSWORD") {
+                $(this).text("HIDE PASSWORD")
+            } else {
+                $(this).text("SHOW PASSWORD")
+            }
+        })
+
+        $('#generate').on("click", function(e) {
+            $('#pw').val(generateRandomPassword(12))
+        })
+
         $('#cancel').on('click', function(event){
             location.href = '/logins'
         })
